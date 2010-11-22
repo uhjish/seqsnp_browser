@@ -1,0 +1,26 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>SeqSNP</h1>
+        <form method="POST" action="seqsnp">
+            Collection:
+            <select name="collection" id="collection">
+                <option value="PDB">PDB</option>
+                <option value="SRA">SRA</option>
+            </select>
+            <br><br>
+            <label for="basePath">Index:</label>
+            <input type="text" name="basePath" id="basePath">  <i>ex: marmur/em_human_CCC_IC_Pt1_1_L</i>
+            <br><br>
+            <label for="seq">Sequences (FASTA)</label><br>
+            <textarea id="seq" name="seq" cols=40 rows=5></textarea><br><br>
+            <br><br>
+            <label for="maxDepth">Coverage Cutoff:</label>
+            <input type="text" name="maxDepth" id="maxDepth">  <i>(optional) ex: 200</i>
+            <br><br>
+            <input type="submit" value="Submit Form"/>
+            <input type="reset" value="Reset Form"/>
+        </form>
+    </body>
+</html>
