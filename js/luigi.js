@@ -30,13 +30,25 @@ var overview;
 var f_xmin = null;
 var f_xmax = null;
 
+var seqsnpData = null;
+
+function showAlignmentWindow(pos){
+    if (top.win){
+        top.win.close();
+    }
+    top.win = window.open("", "alignments", "status=1,width=800,height=400,scrollbars=1");
+    top.win.document.write( showAlignment( seqsnpData["ref"], seqsnpData["hits"], pos ) );
+    top.win.setTimeout("window.scrollTo("+(position*6.5)+",0);", 500);  
+}
+
 function sortByPosition(keyArray, valueMap) {
     return keyArray.sort(function(a,b){return valueMap[a][0]-valueMap[b][0];});
 }
 
-function assignFetchedData( fetched ){
+function assignFetchedData( fetched, seqsnp ){
     annotations = fetched.annotations;
     seq = fetched.sequence;
+    seqsnpData = seqsnp;
     
     var cval;
     fwd = [];
@@ -150,9 +162,6 @@ function plotWithOptions() {
     
     var data_height = (ymax-ymin);
 
-    //add space at bottom for annotations and padding for top and bottom
-    var plot_min = ymin - 2*gutter_width*data_height - num_tracks * anno_width*data_height - pad_width*data_height*(num_tracks-1);
-    var plot_max = ymax + gutter_width*data_height;
 
     //thickness of annotations
     var cur_ann_width = anno_width*data_height;
@@ -162,12 +171,14 @@ function plotWithOptions() {
 
     //add annotations to be plotted
     markings = [];
+    num_tracks = 1;
     var ann_ct = 0;
     for (ann in annotations){
-        if ( ann_ct > 0 && prev_ann_end > annotations[ann][0]){
+        if ( ann_ct > 0 && prev_ann_end >= annotations[ann][0]){
             cur_ann_y = cur_ann_y - cur_ann_width - pad_width*data_height;
+            num_tracks++;
         }
-        markings.push( {    color: colors[ann_ct],
+        markings.push( {    color: colors[ann_ct % colors.length],
                             lineWidth:1, 
                             yaxis:{ 
                                 from: (cur_ann_y - cur_ann_width),
@@ -181,6 +192,9 @@ function plotWithOptions() {
         ann_ct++;
         prev_ann_end = annotations[ann][1];
     }
+    //add space at bottom for annotations and padding for top and bottom
+    var plot_min = ymin - 2*gutter_width*data_height - num_tracks * anno_width*data_height - pad_width*data_height*(num_tracks-1);
+    var plot_max = ymax + gutter_width*data_height;
 
     //check if x_axis limits are pre-defined
     // -- used for zoom-to-annotation
@@ -237,12 +251,20 @@ function plotWithOptions() {
     });
     var previousPoint = null;
 
+    $("#placeholder").bind("plotclick", function (event, pos, item) {
+        alert("click!");
+        if (item) {
+            alert("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
+            //plot.highlight(item.series, item.datapoint);
+        }
+    });
+
     $("#placeholder").bind("plothover", function (event, pos, item) {
         clrTxt = "";
         idx = 0;
         for (ann in annotations){
             if (pos.x > annotations[ann][0] && pos.x < annotations[ann][1] && pos.y < ymin){
-                clrTxt = clrTxt + "<font color=\""+colors[idx]+"\">&diams;</font>-"+ann+"<br>";
+                clrTxt = clrTxt + "<font color=\""+colors[idx % colors.length]+"\">&diams;</font>"+ann+"<br>";
             }
             idx++;
         }
@@ -278,7 +300,7 @@ function initializeGraph() {
     var ann_ct =0;
     for (ann in annotations){
             curLeg = annotations[ann][0]+"-"+annotations[ann][1]
-            legend= legend + "<font color=\""+colors[ann_ct]+"\" size=+1>&diams;</font>&nbsp;<input type=\"button\" value=\""+ann+"\" id=\""+ann+"\" title=\""+curLeg+"\" class=\"legendbutton\"><br>";
+            legend= legend + "<font color=\""+colors[ann_ct % colors.length]+"\" size=+1>&diams;</font>&nbsp;<input type=\"button\" value=\""+ann+"\" id=\""+ann+"\" title=\""+curLeg+"\" class=\"legendbutton\"><br>";
         ann_ct++;
     }
     legend = legend+"</font>";
@@ -305,10 +327,14 @@ function initializeGraph() {
     $(".featSel input").click(function (e) {
         e.preventDefault();
         ann = $(this).val();//attr("name");
+        zoomToAnnotation( ann );
+    });
+}
+function zoomToAnnotation( ann ){
         //alert(ann);
         f_xmin = annotations[ann][0];
         f_xmax = annotations[ann][1];
-        var rng = f_xmax - f_xmin;
+        var rng = 10; //2*(f_xmax - f_xmin;
         f_xmin = f_xmin - rng;
         f_xmax = f_xmax + rng;
         if (f_xmin <0){
@@ -318,9 +344,7 @@ function initializeGraph() {
             f_xmax = fwd.length -1;
         }
         plotWithOptions();
-    });
 }
-
 function showTooltip(x, y, contents) {
     $('<div id="tooltip">' + contents + '</div>').css( {
         position: 'absolute',
@@ -334,3 +358,4 @@ function showTooltip(x, y, contents) {
         'font-size': '70%'
     }).appendTo("body").fadeIn(200);
 }
+

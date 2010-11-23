@@ -3,6 +3,10 @@
  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link href="layout.css" rel="stylesheet" type="text/css"></link>
+<style type="text/css" title="currentStyle">
+    @import "css/demo_page.css";
+    @import "css/demo_table.css";
+</style>
     <!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
     <!--<script language="javascript" type="text/javascript" src="jquery-1.4.2.min.js"></script>
     <script language="javascript" type="text/javascript" src="../jquery-ui-1.8.4.custom.min.js"></script>-->
@@ -10,7 +14,10 @@
     <script language="javascript" type="text/javascript" src="js/jquery.flot.js"></script>
     <script language="javascript" type="text/javascript" src="js/jquery.flot.stack.js"></script>
     <script language="javascript" type="text/javascript" src="js/jquery.flot.selection.js"></script>
+    <script language="javascript" type="text/javascript" src="js/sprintf.js"></script>
     <script language="javascript" type="text/javascript" src="js/luigi.js"></script>
+    <script language="javascript" type="text/javascript" src="js/alignment.js"></script>
+    <script type="text/javascript" src="js/jquery.dataTables.js"></script>
 <style type="text/css">
 
 input.legendbutton
@@ -30,9 +37,21 @@ border: 1px solid grey;
 p {padding: 0px;}
 </style>
 
+        <script type="text/javascript" charset="utf-8">
+            /* Data set - can contain whatever information you want */
+            var colDefs = ${snp_columns};
+            jQuery(document).ready(function() {
+                $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example"></table>' );
+                jQuery('#example').dataTable( {
+                    "aaData": ${snp_rows},
+                    "aoColumns": ${snp_columns}
+                } );    
+            } );
+        </script>
     
 </head>
-<body>
+<body id="dt_example">
+<div id=container>
 <table width="800px" >
 <tr>
     <td>
@@ -41,8 +60,10 @@ p {padding: 0px;}
             <td width="650px" align="center">
             <div id="placeholder" style="width:650px;height:150px;"></div>
             </td>
-            <td valign="top" width="150px">
+            <td valign="top" width="150px"> 
+                <div id="featureSelectorDiv" style="height:150px; overflow:auto;">
                 <p class="featSel" id="features">..</p>
+                </div>
             </td>
         </tr>
         </table>
@@ -74,15 +95,20 @@ p {padding: 0px;}
 </table>
 <script id="source">
 jQuery(function () {
-    jQuery.getJSON("${dataUrl}", function(data){
-                assignFetchedData(data);
-                initializeGraph();
-    });
-    //assignDefaultData();
-    //initializeGraph();    
+    data = ${cvg_data};
+    snpData = ${seqsnp_data};
+    assignFetchedData(data, snpData);
+    initializeGraph();
 
 });
+
+
 </script>
+
+<br><br><br><br>
+<div id=dynamic>
+</div>
+</div>
 
  </body>
 </html>
