@@ -1,9 +1,13 @@
 import urllib
 import urllib2
 import json
+import random
+
+from settings import *
 
 def callSeqSNPService( params ):
-    url = "http://kilauea.mssm.edu:8080/SeqSNPService/seqsnp"
+    server = random.choice( SEQSNP_SERVERS )
+    url = "http://%s/%s" % (server, SEQSNP_ADDRESS)
     data = urllib.urlencode(params)
     req = urllib2.Request( url, data )
     response = urllib2.urlopen(req)
