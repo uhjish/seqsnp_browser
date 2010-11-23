@@ -45,10 +45,9 @@ if page == "query":
     serve_template('query.tmpl')
 elif page == "result":
     print "Content-type: text/html\n\n"
-    collection = get_required_var("collection", form)
     basePath = get_required_var("basePath",form)
     seq = get_required_var("seq",form)
-    args = {"collection": collection, "basePath": basePath, "seq": seq, "format":"json" }
+    args = {"basePath": basePath, "seq": seq, "format":"json" }
     calls = callSeqSNPService(args)
     cvg_data = generate_coverage_map( calls[0]["ref"], calls[0]["hits"],calls[0]["filteredMutations"] )
     snp_cols = get_snp_cols()
