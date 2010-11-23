@@ -283,7 +283,7 @@ function plotWithOptions() {
                         y = item.datapoint[1].toFixed(0);
                     
                     showTooltip(item.pageX, item.pageY,
-                                x + " -> " + seq[x] +" : " + y);
+                                (x+1) + ": " + seq[x] +", " + y);
                 }
             }
         }
