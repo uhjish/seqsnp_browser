@@ -1,18 +1,109 @@
 <html>
-    <head>
-    </head>
+<head>
+<style>
+    .ui-autocomplete-loading { background: white url('images/ui-anim_basic_16x16.gif') right center no-repeat; }
+    .ui-autocomplete {
+        max-height: 100px;
+        max-width: 250px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+        /* add padding to account for vertical scrollbar */
+        padding-right: 20px;
+    }
+    /* IE 6 doesn't support max-height
+     * we use height instead, but this forces the menu to always be this tall
+     */
+    * html .ui-autocomplete {
+        height: 100px;
+    }
+
+    </style>
+    <link rel="stylesheet" href="css/sunny/jquery-ui-1.8.7.custom.css" type="text/css" media="all" /> 
+    <script language="javascript" type="text/javascript" src="js/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.ui.core.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.ui.widget.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.ui.mouse.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.ui.position.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery-ui-1.8.6.custom.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.ui.autocomplete.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.liveSearch.js"></script>
+    <script language="javascript" type="text/javascript" src="js/entrez_live.js"></script>
+    <script language="javascript" type="text/javascript">
+        initializeEntrezLive("ncbi_lookup_species","ncbi_lookup_term","seq");
+    </script>
+</head>
     <body>
+    <script>
+        jQuery(function(){
+            var lastXhr;
+            jQuery("#ncbi_lookup_term").autocomplete({
+                source: function( request, response ){
+                   response( getMatchingNuclRecords() ); 
+                },
+                dataType: "json",
+                focus: function( event, ui ) {
+                    jQuery( "#ncbi_lookup_term" ).val( ui.item.Caption );
+                    return false;
+                },
+                select: function( event, ui ) {
+                    jQuery( "#ncbi_lookup_term" ).val( ui.item.Caption );
+                    jQuery( "#ncbi_lookup_term-desc" ).html( ui.item.Title );
+                    loadFasta( ui.item.id );
+                    return false;
+                }
+
+            }) 
+            .data( "autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li></li>" )
+                    .data( "item.autocomplete", item )
+                    .append( "<a>" + item.Caption + "<br><font size=-1>" + item.Title + "</a>" )
+                    .appendTo( ul );
+            };
+
+        });
+    </script>
         <h1>SeqSNP</h1>
         <form method="POST" action="index.py">
             <input type=hidden name="page" id="page" value="result">
+            <input type=hidden name="format" id="format" value="json">
             <label for="basePath">Index:</label>
             <input type="text" name="basePath" id="basePath">  <i>ex: /mnt/geo_sets/JamesIndexer/indexes/PDB/marmur/em_human_CCC_IC_Pt1_1_L</i>
             <br><br>
-            <label for="seq">Sequences (FASTA)</label><br>
-            <textarea id="seq" name="seq" cols=40 rows=5></textarea><br><br>
+            <div class="ui-widget">
+            <label for="ncbi_lookup_species">Species:</label>
+            <select name=ncbi_lookup_species id=ncbi_lookup_species>
+            <option value="human">human</option>
+            </select>
             <br><br>
-            <label for="maxDepth">Coverage Cutoff:</label>
+            <label for="ncbi_lookup_term">Name/ID:</label><br>
+            <input type=text id=ncbi_lookup_term name=ncbi_lookup_term size=30 style="z-index: 100; position: relative">
+            <p id="ncbi_lookup_term-desc"></p>
+            <label for="seq">Sequence (FASTA)</label><br>
+            <textarea id="seq" name="seq" cols=42 rows=5></textarea><br><br>
+            </div>
+            <b>Override Default Parameters</b>
+            <br>
+            <label for="mode">Mode:</label>
+            <select name="mode" id="mode">
+                <option value="rseq">rseq</option>
+                <option value="exome">exome</option>
+                <option value="nongenic">non-genic</option>
+            </select>
+            <br>
+            <label for="pairedEnd">pairedEnd:</label>
+            <select name="pairedEnd" id="pairedEnd">
+                <option value="0">false</option>
+                <option value="1">true</option>
+            </select>
+            <br>
+            <label for="readLength">Read Length:</label>
+            <input type="text" name="readLength" id="readLength">  <i>default: 76</i>
+            <br><label for="wordSize">WordSize:</label>
+            <input type="text" name="wordSize" id="wordSize">  <i>default: 30</i>
+            <br><label for="maxDepth">Coverage Cutoff:</label>
             <input type="text" name="maxDepth" id="maxDepth">  <i>(optional) ex: 200</i>
+            <br>
             <br><br>
             <input type="submit" value="Submit Form"/>
             <input type="reset" value="Reset Form"/>

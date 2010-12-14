@@ -47,17 +47,23 @@ elif page == "result":
     print "Content-type: text/html\n\n"
     basePath = get_required_var("basePath",form)
     seq = get_required_var("seq",form)
-    args = {"basePath": basePath, "seq": seq, "format":"json" }
-    calls = callSeqSNPService(args)
-    cvg_data = generate_coverage_map( calls[0]["ref"], calls[0]["hits"],calls[0]["filteredMutations"] )
-    snp_cols = get_snp_cols()
-    snp_rows = get_snp_rows( calls[0]["ref"], calls[0]["filteredMutations"] )
-    #print showAlignment( calls[0]["ref"], calls[0]["hits"], 262)
-    serve_template('result.tmpl', 
-                    cvg_data=json.dumps(cvg_data),
-                    seqsnp_data=json.dumps(calls[0]),
-                    snp_columns=json.dumps(snp_cols),
-                    snp_rows=json.dumps(snp_rows) )         
+    args = {}
+    for k in form.keys():
+        args[k] = form.getvalue(k)
+    res = callSeqSNPService(args)
+    try:
+        calls = res["results"]
+        cvg_data = generate_coverage_map( calls[0]["ref"], calls[0]["hits"],calls[0]["filteredMutations"] )
+        snp_cols = get_snp_cols()
+        snp_rows = get_snp_rows( calls[0]["ref"], calls[0]["filteredMutations"] )
+        #print showAlignment( calls[0]["ref"], calls[0]["hits"], 262)
+        serve_template('result.tmpl', 
+                        cvg_data=json.dumps(cvg_data),
+                        seqsnp_data=json.dumps(calls[0]),
+                        snp_columns=json.dumps(snp_cols),
+                        snp_rows=json.dumps(snp_rows) )        
+    except:
+        print res 
 else:
     raise Exception("Unsupported request for page: %s" % page)
  
