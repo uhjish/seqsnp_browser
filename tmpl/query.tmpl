@@ -67,8 +67,13 @@
         <form method="POST" action="index.py">
             <input type=hidden name="page" id="page" value="result">
             <input type=hidden name="format" id="format" value="json">
-            <label for="basePath">Index:</label>
-            <input type="text" name="basePath" id="basePath">  <i>ex: /mnt/geo_sets/JamesIndexer/indexes/PDB/marmur/em_human_CCC_IC_Pt1_1_L</i>
+            % if not libname: 
+                <label for="basePath">Index:</label>
+                <input type="text" name="basePath" id="basePath">  <i>ex: /mnt/geo_sets/JamesIndexer/indexes/PDB/marmur/em_human_CCC_IC_Pt1_1_L</i>
+            % else:
+                Library: <b>${libname}</b>
+                <input type=hidden name=basePath id=basePath value="${libpath}">
+            % endif
             <br><br>
             <div class="ui-widget">
             <label for="ncbi_lookup_species">Species:</label>

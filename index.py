@@ -42,7 +42,9 @@ mylookup = TemplateLookup(directories=['./tmpl'])
 
 if page == "query":
     print "Content-type: text/html\n\n"
-    serve_template('query.tmpl')
+    name = get_optional_var("libname",form)
+    path = get_optional_var("libpath", form)
+    serve_template('query.tmpl', libname=name, libpath=path)
 elif page == "result":
     print "Content-type: text/html\n\n"
     basePath = get_required_var("basePath",form)
