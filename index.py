@@ -55,7 +55,7 @@ if page == "query":
         suf_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()).strip()
         serve_template('query_loading.tmpl',project=name,suffix_files=suff_list, time_start=st_time, time_rl_start=suf_time) 
         #pull random sequences from the index to get read length
-        read_length = get_read_length( directory, suff_list )
+        read_length = getReadLength( path )
         suf_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()).strip()
         serve_template('query_rl.tmpl',read_length=read_length, time_rl_done=suf_time)
     serve_template('query_form.tmpl', libname=name, libpath=path,read_length=read_length)
