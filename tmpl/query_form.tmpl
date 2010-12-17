@@ -1,0 +1,66 @@
+        </div>
+        <form method="POST" action="index.py">
+            <input type=hidden name="page" id="page" value="result">
+            <input type=hidden name="format" id="format" value="json">
+            % if not libname: 
+                <label for="basePath">Index:</label>
+                <input type=text name=basePath id=basePath>
+            % else:
+                Library: <b>${libname}</b>
+                <input type=hidden name=basePath id=basePath value="${libpath}">
+            % endif
+            <br><br>
+            <div class="ui-widget">
+            <label for="ncbi_lookup_species">Species:</label>
+            <select name=ncbi_lookup_species id=ncbi_lookup_species>
+            <option value="human">human</option>
+            <option value="any">any</option>
+            </select>
+            <br><br>
+            <label for="ncbi_lookup_term">Name/ID:</label><br>
+            <input type=text id=ncbi_lookup_term name=ncbi_lookup_term size=30 style="z-index: 100; position: relative">
+            <p id="ncbi_lookup_term-desc"></p>
+            <label for="seq">Sequence (FASTA)</label><br>
+            <textarea id="seq" name="seq" cols=42 rows=5></textarea><br><br>
+            </div>
+            <b>Override Default Parameters</b>
+            <br>
+            <label for="mode">Mode:</label>
+            <select name="mode" id="mode">
+                <option value="rseq">rseq</option>
+                <option value="exome">exome</option>
+                <option value="nongenic">non-genic</option>
+            </select>
+            <br>
+            <label for="pairedEnd">pairedEnd:</label>
+            <select name="pairedEnd" id="pairedEnd">
+                <option value="0">false</option>
+                <option value="1">true</option>
+            </select>
+            <br>
+            % if not read_length > 0: 
+                <label for="readLength">Read Length:</label>
+                <input type="text" name="readLength" id="readLength">  <i>default: 76</i>
+                <br><label for="wordSize">WordSize:</label>
+                <input type="text" name="wordSize" id="wordSize">  <i>default: 30</i>
+            % else:
+                Read Length: <b>${read_length}</b>
+                <input type=hidden name=readLength id=readLength value="${read_length}">
+                <br><label for="wordSize">WordSize:</label>
+                <%
+                    wsize = read_length-10
+                %>
+                <input type="text" name="wordSize" id="wordSize" value=${wsize}>  <i></i>
+            % endif
+            <br><label for="maxDepth">Coverage Cutoff:</label>
+            <input type="text" name="maxDepth" id="maxDepth">  <i>(optional) ex: 200</i>
+            <br>
+            <br><br>
+            <input type="submit" value="Submit Form"/>
+            <input type="reset" value="Reset Form"/>
+        </form>
+    <script language="javascript">
+        jQuery('#loading').hide('slow');
+    </script>
+    </body>
+</html>

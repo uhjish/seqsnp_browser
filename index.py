@@ -3,13 +3,14 @@ import json
 
 from libseqsnp.fetch import *
 from libseqsnp.format import *
+from libseqsnp.util import *
 from libseqsnp.bp2html import *
 from libseqsnp.coverage import *
 from mako.template import Template
 from mako.lookup import TemplateLookup
 from mako import exceptions
 import os
-
+import time
 import cgi
 
 import cgitb
@@ -44,7 +45,20 @@ if page == "query":
     print "Content-type: text/html\n\n"
     name = get_optional_var("libname",form)
     path = get_optional_var("libpath", form)
-    serve_template('query.tmpl', libname=name, libpath=path)
+    org = get_optional_var("org", form)
+    serve_template('query.tmpl')
+    read_length=None
+    if path:
+        st_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()).strip()
+        #find the indices
+        (directory, suff_list) = get_suffix_array_files( path )
+        suf_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()).strip()
+        serve_template('query_loading.tmpl',project=name,suffix_files=suff_list, time_start=st_time, time_rl_start=suf_time) 
+        #pull random sequences from the index to get read length
+        read_length = get_read_length( directory, suff_list )
+        suf_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()).strip()
+        serve_template('query_rl.tmpl',read_length=read_length, time_rl_done=suf_time)
+    serve_template('query_form.tmpl', libname=name, libpath=path,read_length=read_length)
 elif page == "result":
     print "Content-type: text/html\n\n"
     basePath = get_required_var("basePath",form)

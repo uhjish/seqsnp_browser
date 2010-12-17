@@ -1,0 +1,10 @@
+            <br>Project: ${project} 
+            <br><br>
+            <br>${time_start}: Fetching index data.
+            <br><br>
+            Suffix Files Found
+            % for fi in suffix_files:
+                <br>${fi}
+            % endfor
+            <br>
+            <br>${time_rl_start}: Sampling read lengths.
