@@ -40,6 +40,8 @@ page = get_required_var("page",form)
 
 mylookup = TemplateLookup(directories=['./tmpl'])
 
+unbuffered = os.fdopen(sys.stdout.fileno(), 'w', 0)
+sys.stdout = unbuffered
 
 if page == "query":
     print "Content-type: text/html\n\n"
@@ -48,16 +50,19 @@ if page == "query":
     org = get_optional_var("org", form)
     serve_template('query.tmpl')
     read_length=None
+    sys.stdout.flush()
     if path:
         st_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()).strip()
         #find the indices
         (directory, suff_list) = get_suffix_array_files( path )
         suf_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()).strip()
         serve_template('query_loading.tmpl',project=name,suffix_files=suff_list, time_start=st_time, time_rl_start=suf_time) 
+        sys.stdout.flush()
         #pull random sequences from the index to get read length
         read_length = getReadLength( path )
         suf_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()).strip()
         serve_template('query_rl.tmpl',read_length=read_length, time_rl_done=suf_time)
+        sys.stdout.flush()
     serve_template('query_form.tmpl', libname=name, libpath=path,read_length=read_length)
 elif page == "result":
     print "Content-type: text/html\n\n"
