@@ -18,7 +18,8 @@
             </select>
             <br><br>
             <label for="ncbi_lookup_term">Name/ID:</label><br>
-            <input type=text id=ncbi_lookup_term name=ncbi_lookup_term size=30 style="z-index: 100; position: relative">
+            <input type=text id=ncbi_lookup_term name=ncbi_lookup_term size=30>&nbsp;
+            <img src="images/search.png" width=30 height=30 onClick="jQuery('#ncbi_lookup_term').focus();jQuery('#ncbi_lookup_term').autocomplete('search'); return(false);" style="vertical-align:bottom"></img>
             <p id="ncbi_lookup_term-desc"></p>
             <label for="seq">Sequence (FASTA)</label><br>
             <textarea id="seq" name="seq" cols=42 rows=5></textarea><br><br>

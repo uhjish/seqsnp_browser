@@ -56,6 +56,7 @@ function getMatchingNuclRecords( ){
     var sp = getFieldValue( speciesField );
     if (sp != "any"){ 
         qterm += " AND " + getFieldValue( speciesField ) + "[orgn]";
+        qterm += " AND biomol+rna[prop]";
     }
    // window.alert(qterm);
     var params = ({ db:"nuccore",

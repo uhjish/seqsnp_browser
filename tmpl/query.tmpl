@@ -3,8 +3,8 @@
 <style>
     .ui-autocomplete-loading { background: white url('images/ui-anim_basic_16x16.gif') right center no-repeat; }
     .ui-autocomplete {
-        max-height: 100px;
-        max-width: 250px;
+        max-height: 800px;
+        max-width: 400px;
         overflow-y: auto;
         /* prevent horizontal scrollbar */
         overflow-x: hidden;
@@ -51,7 +51,9 @@
                     jQuery( "#ncbi_lookup_term-desc" ).html( ui.item.Title );
                     loadFasta( ui.item.id );
                     return false;
-                }
+                },
+                delay: 5000,
+                minLength: 3
 
             }) 
             .data( "autocomplete" )._renderItem = function( ul, item ) {
