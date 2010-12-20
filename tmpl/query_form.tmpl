@@ -7,6 +7,7 @@
                 <input type=text name=basePath id=basePath>
             % else:
                 Library: <b>${libname}</b>
+                <input type=hidden name=projName id=projName value="${libname}">
                 <input type=hidden name=basePath id=basePath value="${libpath}">
             % endif
             <br><br>

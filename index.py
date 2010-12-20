@@ -67,6 +67,9 @@ if page == "query":
 elif page == "result":
     print "Content-type: text/html\n\n"
     basePath = get_required_var("basePath",form)
+    projName = get_optional_var("projName",form)
+    if not projName:
+        projName = basePath.split("/")[-1]
     seq = get_required_var("seq",form)
     args = {}
     for k in form.keys():
@@ -78,7 +81,8 @@ elif page == "result":
         snp_cols = get_snp_cols()
         snp_rows = get_snp_rows( calls[0]["ref"], calls[0]["filteredMutations"] )
         #print showAlignment( calls[0]["ref"], calls[0]["hits"], 262)
-        serve_template('result.tmpl', 
+        serve_template('result.tmpl',
+                        projName = projName,
                         cvg_data=json.dumps(cvg_data),
                         seqsnp_data=json.dumps(calls[0]),
                         snp_columns=json.dumps(snp_cols),
