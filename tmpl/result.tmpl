@@ -97,6 +97,13 @@ ${projName}
     </p>
     </td>
 </tr>
+<tr>
+    <td>
+        Show Alignments At:
+        <input type="text" id="alnPos" name="alnPos">
+        <input type="button" id="showMe" name="showMe" value="Go" onClick="showAlignmentWindow(document.getElementById('alnPos').value);return false;">
+    </td>
+</tr>
 </table>
 <script id="source">
 jQuery(function () {
