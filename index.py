@@ -89,6 +89,7 @@ elif page == "result":
                         snp_rows=json.dumps(snp_rows) )        
     except:
         print res 
+        raise
 else:
     raise Exception("Unsupported request for page: %s" % page)
  
